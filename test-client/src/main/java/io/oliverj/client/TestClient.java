@@ -8,54 +8,79 @@ import io.oliverj.module.network.TestPacket;
 import io.oliverj.module.network.ValidPacket;
 import io.oliverj.module.network.packet.event.EventRegistry;
 import io.oliverj.module.network.packet.event.PacketSubscriber;
-import io.oliverj.module.network.packet.handler.PacketChannelInboundHandler;
-import io.oliverj.module.network.packet.handler.PacketEncoder;
 import io.oliverj.module.network.packet.io.Responder;
-import io.oliverj.module.network.packet.registry.PacketRegistry;
-import io.oliverj.module.registry.BuiltInRegistries;
-import io.oliverj.module.registry.Registry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
-public class TestClient extends ChannelInitializer<Channel> {
+public class TestClient {
+
+    public static final Logger LOGGER = LogManager.getLogger();
 
     public final Bootstrap bootstrap;
-    public final PacketRegistry packetRegistry;
     public final EventRegistry eventRegistry;
 
     public final EventLoopGroup workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
 
-    public TestClient(EventRegistry eventRegistry, Consumer<Future<? super Void>> doneCallback) {
-        this.packetRegistry = Registry.getRegistry(BuiltInRegistries.PACKET);
+    public TestClient(String host, int port, int maxAttempts, int initialDelayMillis, EventRegistry eventRegistry, Consumer<Future<? super Void>> doneCallback) {
         this.eventRegistry = eventRegistry;
         this.bootstrap = new Bootstrap()
                 .option(ChannelOption.AUTO_READ, true)
                 .group(workerGroup)
-                .handler(this)
+                .handler(new ClientInitializer(eventRegistry))
                 .channel(NioSocketChannel.class);
 
         this.eventRegistry.registerEvents(this);
+        InetSocketAddress address = new InetSocketAddress(host, port);
 
-        try {
-            this.bootstrap.connect(new InetSocketAddress("127.0.0.1", 1234))
-                    .awaitUninterruptibly().sync().addListener(doneCallback::accept);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        this.connectWithRetry(address, maxAttempts, initialDelayMillis, doneCallback);
+    }
+
+    private void connectWithRetry(InetSocketAddress address, int maxAttempts, long initialDelayMillis, Consumer<Future<? super Void>> doneCallback) {
+        int attempt = 0;
+        long delay = initialDelayMillis;
+
+        while (attempt < maxAttempts) {
+            attempt++;
+            LOGGER.info("Attempting to connect (attempt {} of {})...", attempt, maxAttempts);
+            ChannelFuture future = bootstrap.connect(address).awaitUninterruptibly();
+
+            if (future.isSuccess()) {
+                LOGGER.info("Connected successfully on attempt {}", attempt);
+                future.addListener(doneCallback::accept);
+                return;
+            } else {
+                LOGGER.warn("Connection attempt {} failed: {}", attempt, future.cause().getMessage());
+            }
+
+            if (attempt < maxAttempts) {
+                try {
+                    LOGGER.info("Retrying in {} ms...", delay);
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    LOGGER.error("Retry interrupted", e);
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+                delay = Math.min(delay * 2, TimeUnit.SECONDS.toMillis(30)); // Cap at 30 seconds
+            }
         }
+
+        LOGGER.error("Failed to connect to {} after {} attempts.", address, maxAttempts);
+
+        this.shutdown();
     }
 
-    @Override
-    protected void initChannel(Channel ch) throws Exception {
-        ch.pipeline()
-                .addLast(new PacketEncoder(packetRegistry), new PacketEncoder(packetRegistry), new PacketChannelInboundHandler(eventRegistry));
-    }
 
     @PacketSubscriber
     public void onPacket(ValidPacket packet, Responder responder) {
+        LOGGER.debug("Received ValidPacket");
         responder.respond(new TestPacket().setUuid(UUID.randomUUID()));
     }
 

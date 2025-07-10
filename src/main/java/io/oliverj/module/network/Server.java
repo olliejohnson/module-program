@@ -13,6 +13,8 @@ import io.oliverj.module.network.packet.registry.PacketRegistry;
 import io.oliverj.module.network.packet.response.RespondingPacket;
 import io.oliverj.module.registry.BuiltInRegistries;
 import io.oliverj.module.registry.Registry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
@@ -21,11 +23,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 import java.util.function.Consumer;
 
-public class Server extends ChannelInitializer<Channel> {
+public class Server{
+
+    public static final Logger LOGGER = LogManager.getLogger();
 
     private final ServerBootstrap bootstrap;
-    private final PacketRegistry packetRegistry;
-    private final EventRegistry eventRegistry;
 
     private EventLoopGroup parentGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
     private EventLoopGroup workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
@@ -33,14 +35,12 @@ public class Server extends ChannelInitializer<Channel> {
     private Channel connectedChannel;
 
     public Server(EventRegistry eventRegistry, Consumer<Future<? super Void>> doneCallback) {
-        this.packetRegistry = Registry.getRegistry(BuiltInRegistries.PACKET);
         this.bootstrap = new ServerBootstrap()
                 .option(ChannelOption.AUTO_READ, true)
                 .childOption(ChannelOption.SO_KEEPALIVE, true)
                 .group(parentGroup, workerGroup)
-                .childHandler(this)
+                .childHandler(new ServerInitializer(eventRegistry))
                 .channel(NioServerSocketChannel.class);
-        this.eventRegistry = eventRegistry;
 
         try {
             this.bootstrap.bind(new InetSocketAddress("127.0.0.1", 1234))
@@ -48,15 +48,6 @@ public class Server extends ChannelInitializer<Channel> {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    @Override
-    protected void initChannel(Channel ch) throws Exception {
-        ch.pipeline()
-                .addLast(new PacketDecoder(packetRegistry), new PacketEncoder(packetRegistry), new PacketChannelInboundHandler(eventRegistry));
-        new RespondingPacket<>(new ValidPacket(), TestPacket.class, packet -> {
-            System.out.println(packet.getUuid());
-        }).send(ch);
     }
 
     public void shutdown() {

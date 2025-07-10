@@ -2,6 +2,8 @@ package io.oliverj.module.network.packet.response;
 
 import io.netty.channel.ChannelOutboundInvoker;
 import io.oliverj.module.network.packet.Packet;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,11 +30,13 @@ public class RespondingPacket<T extends Packet> {
     }
 
     public void send(ChannelOutboundInvoker invoker) {
+        LOGGER.debug("Sending packet");
         invoker.writeAndFlush(toSend);
         pendingResponses.put(toSend.getSessionId(), new PendingResponse<>(responseType, callback, timeout));
     }
 
     public static void callReceive(Packet packet) {
+        LOGGER.debug("callReceive");
         if (!pendingResponses.containsKey(packet.getSessionId())) {
             return;
         }

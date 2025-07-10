@@ -1,6 +1,9 @@
 package io.oliverj.client;
 
+import io.oliverj.client.config.Config;
+import io.oliverj.client.config.ConfigLoader;
 import io.oliverj.module.network.TestPacket;
+import io.oliverj.module.network.ValidPacket;
 import io.oliverj.module.network.packet.event.EventRegistry;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
 import io.oliverj.module.registry.BuiltInRegistries;
@@ -12,6 +15,7 @@ public class Runner {
         Registry.addRegister(BuiltInRegistries.PACKET, new PacketRegistry());
 
         BuiltInRegistries.PACKET.get().registerPacket(0, TestPacket.class);
+        BuiltInRegistries.PACKET.get().registerPacket(1, ValidPacket.class);
 
         TestClient client = null;
 

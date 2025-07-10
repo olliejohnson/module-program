@@ -7,6 +7,8 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import io.oliverj.module.network.packet.Packet;
 import io.oliverj.module.network.packet.buffer.PacketBuffer;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
@@ -17,6 +19,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
     }
 
     protected void encode(ChannelHandlerContext channelHandlerContext, Packet packet, ByteBuf byteBuf) throws Exception {
+        LOGGER.debug("Encoding packet");
         int packetId = packetRegistry.getPacketId(packet.getClass());
         if (packetId < 0) {
             throw new EncoderException("Returned PacketId by registry is < 0");

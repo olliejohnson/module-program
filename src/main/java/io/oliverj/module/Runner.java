@@ -3,6 +3,7 @@ package io.oliverj.module;
 import io.netty.channel.ChannelHandlerContext;
 import io.oliverj.module.network.Server;
 import io.oliverj.module.network.TestPacket;
+import io.oliverj.module.network.ValidPacket;
 import io.oliverj.module.network.packet.event.EventRegistry;
 import io.oliverj.module.network.packet.event.PacketSubscriber;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
@@ -28,6 +29,7 @@ public class Runner {
         Registry.addRegister(BuiltInRegistries.PACKET, new PacketRegistry());
 
         BuiltInRegistries.PACKET.get().registerPacket(0, TestPacket.class);
+        BuiltInRegistries.PACKET.get().registerPacket(1, ValidPacket.class);
 
         PluginLoader loader = new PluginLoader(null);
 
@@ -62,7 +64,7 @@ public class Runner {
 
         Thread network = new Thread(() -> {
             Server server = new Server(eventRegistry, future -> {});
-        });
+        }, "render");
 
         network.start();
 

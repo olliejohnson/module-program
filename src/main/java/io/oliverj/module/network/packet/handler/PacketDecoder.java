@@ -7,6 +7,8 @@ import io.netty.handler.codec.DecoderException;
 import io.oliverj.module.network.packet.Packet;
 import io.oliverj.module.network.packet.buffer.PacketBuffer;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -19,6 +21,7 @@ public class PacketDecoder extends ByteToMessageDecoder {
     }
 
     protected void decode(ChannelHandlerContext channelHandlerContext, ByteBuf byteBuf, List<Object> list) throws Exception {
+        LOGGER.debug("Decoding packet");
         int packetId = byteBuf.readInt();
         if (!packetRegistry.containsPacketId(packetId)) {
             throw new DecoderException("Received invalid packet id");
