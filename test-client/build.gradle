@@ -19,7 +19,15 @@ dependencies {
 }
 
 application {
-    mainClass = "io.oliverj.client.Runnable"
+    mainClass = "io.oliverj.client.Runner"
+}
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "io.oliverj.client.Runner"
+        )
+    }
 }
 
 test {

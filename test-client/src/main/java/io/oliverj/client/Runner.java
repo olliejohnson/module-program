@@ -1,14 +1,12 @@
 package io.oliverj.client;
 
-import io.netty.channel.ChannelHandlerContext;
 import io.oliverj.module.network.TestPacket;
 import io.oliverj.module.network.packet.event.EventRegistry;
-import io.oliverj.module.network.packet.event.PacketSubscriber;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
 import io.oliverj.module.registry.BuiltInRegistries;
 import io.oliverj.module.registry.Registry;
 
-public class Runnable {
+public class Runner {
 
     public static void main(String[] args) {
         Registry.addRegister(BuiltInRegistries.PACKET, new PacketRegistry());
