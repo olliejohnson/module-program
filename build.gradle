@@ -49,5 +49,5 @@ tasks.register("runDemo", JavaExec) {
 
     classpath = files("run/module-program-all.jar")
     classpath += sourceSets.main.runtimeClasspath
-    main = "io.oliverj.module.Runner"
+    mainClass = "io.oliverj.module.Runner"
 }

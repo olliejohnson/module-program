@@ -2,22 +2,24 @@ package io.oliverj.client;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
-import io.oliverj.module.network.packet.event.EventRegistry;
-import io.oliverj.module.network.packet.handler.PacketChannelInboundHandler;
+import io.netty.handler.logging.LoggingHandler;
+import io.oliverj.client.handler.TestPacketHandler;
 import io.oliverj.module.network.packet.handler.PacketDecoder;
 import io.oliverj.module.network.packet.handler.PacketEncoder;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
 import io.oliverj.module.registry.BuiltInRegistries;
 import io.oliverj.module.registry.Registry;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ClientInitializer extends ChannelInitializer<Channel> {
 
-    private final PacketRegistry packetRegistry;
-    private final EventRegistry eventRegistry;
+    public static final Logger LOGGER = LogManager.getLogger();
 
-    public ClientInitializer(EventRegistry e) {
+    private final PacketRegistry packetRegistry;
+
+    public ClientInitializer() {
         this.packetRegistry = Registry.getRegistry(BuiltInRegistries.PACKET);
-        this.eventRegistry = e;
     }
 
     @Override
@@ -25,7 +27,8 @@ public class ClientInitializer extends ChannelInitializer<Channel> {
         ch.pipeline().addLast(
                 new PacketEncoder(packetRegistry),
                 new PacketDecoder(packetRegistry),
-                new PacketChannelInboundHandler(eventRegistry)
+                new TestPacketHandler(),
+                new LoggingHandler()
         );
     }
 }

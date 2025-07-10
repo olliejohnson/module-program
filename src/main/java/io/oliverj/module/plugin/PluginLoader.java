@@ -3,6 +3,10 @@ package io.oliverj.module.plugin;
 import com.google.gson.Gson;
 import io.oliverj.module.PluginMetadata;
 import io.oliverj.module.api.BasePlugin;
+import io.oliverj.module.plugin.struct.Dag;
+import io.oliverj.module.plugin.struct.HashDag;
+import io.oliverj.module.registry.BuiltInRegistries;
+import io.oliverj.module.registry.Registry;
 import io.oliverj.module.util.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -15,8 +19,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PluginLoader {
 
@@ -34,7 +38,7 @@ public class PluginLoader {
         }
     }
 
-    public void loadAll() throws URISyntaxException {
+    public void loadAll() throws URISyntaxException, IOException {
         LOGGER.info("Starting Plugin Discovery");
 
         URL loc = getClass().getProtectionDomain().getCodeSource().getLocation();
@@ -48,7 +52,7 @@ public class PluginLoader {
         }
     }
 
-    public void load(File plugin) {
+    public void load(File plugin) throws IOException {
         URLClassLoader classLoader = null;
         try {
             classLoader = new URLClassLoader(new URL[]{plugin.toURI().toURL()});
@@ -80,7 +84,7 @@ public class PluginLoader {
 
             BasePlugin pluginClass = clazz.getDeclaredConstructor().newInstance();
 
-            plugins.put(metadata.identifier, Pair.of(pluginClass, metadata));
+            Registry.register(BuiltInRegistries.PLUGIN, metadata.identifier, Pair.of(pluginClass, metadata));
         } catch (IOException e) {
             LOGGER.error("Failed to load plugin metadata", e);
         } catch (ClassNotFoundException e) {
@@ -92,15 +96,33 @@ public class PluginLoader {
         } catch (NoSuchMethodException e) {
             LOGGER.error("Method '<init>' does not exist", e);
         }
+
+        classLoader.close();
+    }
+
+    public List<String> createLoadOrder() {
+        Dag<String> dag = new HashDag<>();
+        for (PluginMetadata meta : Registry.getRegistry(BuiltInRegistries.PLUGIN).entries().stream().map(p -> p.second).toList()) {
+            for (String dep : meta.depends.keySet()) {
+                dag.put(dep, meta.identifier);
+            }
+        }
+        return dag.sort();
     }
 
     public void init(String identifier) {
-        PluginMetadata meta = plugins.get(identifier).second;
+        List<String> builtin = List.of("core", "loader");
+        if (builtin.contains(identifier)) return;
+
+        PluginMetadata meta = Registry.getRegistry(BuiltInRegistries.PLUGIN).get(identifier).second;
+
         LOGGER.info("Initializing {} ({}) version {}", meta.name, meta.identifier, meta.version);
-        plugins.get(identifier).first.init();
+        Registry.getRegistry(BuiltInRegistries.PLUGIN).get(identifier).first.init();
     }
 
     public void initAll() {
-        plugins.forEach((id, pair) -> init(id));
+        List<String> order = createLoadOrder();
+
+        order.forEach(this::init);
     }
 }

@@ -8,6 +8,7 @@ module io.oliverj.module {
     requires jdk.unsupported;
     requires io.netty.common;
     requires io.netty.codec;
+    requires io.netty.handler;
 
     exports io.oliverj.module.api;
 }

@@ -4,6 +4,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.oliverj.module.network.EstablishPacket;
 import io.oliverj.module.network.TestPacket;
 import io.oliverj.module.network.ValidPacket;
 import io.oliverj.module.network.packet.event.EventRegistry;
@@ -24,19 +25,17 @@ public class TestClient {
     public static final Logger LOGGER = LogManager.getLogger();
 
     public final Bootstrap bootstrap;
-    public final EventRegistry eventRegistry;
+    public static Channel channel;
 
     public final EventLoopGroup workerGroup = new MultiThreadIoEventLoopGroup(NioIoHandler.newFactory());
 
-    public TestClient(String host, int port, int maxAttempts, int initialDelayMillis, EventRegistry eventRegistry, Consumer<Future<? super Void>> doneCallback) {
-        this.eventRegistry = eventRegistry;
+    public TestClient(String host, int port, int maxAttempts, int initialDelayMillis, Consumer<Future<? super Void>> doneCallback) {
         this.bootstrap = new Bootstrap()
                 .option(ChannelOption.AUTO_READ, true)
                 .group(workerGroup)
-                .handler(new ClientInitializer(eventRegistry))
+                .handler(new ClientInitializer())
                 .channel(NioSocketChannel.class);
 
-        this.eventRegistry.registerEvents(this);
         InetSocketAddress address = new InetSocketAddress(host, port);
 
         this.connectWithRetry(address, maxAttempts, initialDelayMillis, doneCallback);
@@ -54,6 +53,7 @@ public class TestClient {
             if (future.isSuccess()) {
                 LOGGER.info("Connected successfully on attempt {}", attempt);
                 future.addListener(doneCallback::accept);
+                channel = future.channel();
                 return;
             } else {
                 LOGGER.warn("Connection attempt {} failed: {}", attempt, future.cause().getMessage());
@@ -75,13 +75,6 @@ public class TestClient {
         LOGGER.error("Failed to connect to {} after {} attempts.", address, maxAttempts);
 
         this.shutdown();
-    }
-
-
-    @PacketSubscriber
-    public void onPacket(ValidPacket packet, Responder responder) {
-        LOGGER.debug("Received ValidPacket");
-        responder.respond(new TestPacket().setUuid(UUID.randomUUID()));
     }
 
     public void shutdown() {

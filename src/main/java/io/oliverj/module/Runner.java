@@ -1,13 +1,9 @@
 package io.oliverj.module;
 
-import io.netty.channel.ChannelHandlerContext;
-import io.oliverj.module.network.Server;
-import io.oliverj.module.network.TestPacket;
-import io.oliverj.module.network.ValidPacket;
-import io.oliverj.module.network.packet.event.EventRegistry;
-import io.oliverj.module.network.packet.event.PacketSubscriber;
+import io.oliverj.module.network.*;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
 import io.oliverj.module.plugin.PluginLoader;
+import io.oliverj.module.plugin.PluginRegistry;
 import io.oliverj.module.registry.BuiltInRegistries;
 import io.oliverj.module.registry.GenericRegistry;
 import io.oliverj.module.registry.Registry;
@@ -17,19 +13,28 @@ import org.apache.logging.log4j.Logger;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.UUID;
 
 public class Runner {
 
     public static final Logger LOGGER = LogManager.getLogger();
+
+    private static volatile Server server;
+
+    public static void setServer(Server srv) {
+        server = srv;
+    }
 
     public static void main(String[] args) throws Exception {
         LOGGER.info("Starting Application");
 
         Registry.addRegister(BuiltInRegistries.DEMO, new GenericRegistry<>());
         Registry.addRegister(BuiltInRegistries.PACKET, new PacketRegistry());
+        Registry.addRegister(BuiltInRegistries.PLUGIN, new PluginRegistry());
 
-        BuiltInRegistries.PACKET.get().registerPacket(0, TestPacket.class);
-        BuiltInRegistries.PACKET.get().registerPacket(1, ValidPacket.class);
+        BuiltInRegistries.PACKET.get().registerPacket(PacketIds.TEST, TestPacket.class);
+        BuiltInRegistries.PACKET.get().registerPacket(PacketIds.VALID, ValidPacket.class);
+        BuiltInRegistries.PACKET.get().registerPacket(PacketIds.ESTABLISH, EstablishPacket.class);
 
         PluginLoader loader = new PluginLoader(null);
 
@@ -49,24 +54,21 @@ public class Runner {
             panel.add(label);
         }
 
-        EventRegistry eventRegistry = new EventRegistry();
-
-        eventRegistry.registerEvents(new Object() {
-
-            public static final Logger LOGGER = LogManager.getLogger();
-
-            @PacketSubscriber
-            @SuppressWarnings("unused")
-            public void onPacketReceive(TestPacket packet, ChannelHandlerContext ctx) {
-                LOGGER.info("Received {} from {}", packet.getUuid().toString(), ctx.channel().remoteAddress().toString());
-            }
-        });
-
         Thread network = new Thread(() -> {
-            Server server = new Server(eventRegistry, future -> {});
-        }, "render");
+             setServer(new Server(future -> {
+                 LOGGER.info("Server started");
+             }));
+        }, "network");
 
         network.start();
+
+        Button button = new Button("Send packet");
+        button.addActionListener(e -> {
+            TestPacket packet = new TestPacket().setUuid(UUID.randomUUID());
+            ConnectionManager.get("test-client").writeAndFlush(packet);
+        });
+
+        panel.add(button);
 
         frame.setSize(300, 300);
 
@@ -75,6 +77,9 @@ public class Runner {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
+                LOGGER.info("Stopping application");
+                server.shutdown();
+                LOGGER.info("Exiting");
                 System.exit(0);
             }
         });
