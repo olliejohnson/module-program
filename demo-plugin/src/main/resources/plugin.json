@@ -1,0 +1,12 @@
+{
+  "name": "Demo",
+  "identifier": "io.oliverj.demo-plugin",
+  "version": "0.0.1-alpha+local",
+  "entrypoints": {
+    "main": "io.oliverj.demo.DemoPlugin"
+  },
+  "depends": {
+    "core": "^0.0.1",
+    "loader": "^0.0.1"
+  }
+}

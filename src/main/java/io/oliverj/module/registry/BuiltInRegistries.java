@@ -1,7 +1,11 @@
 package io.oliverj.module.registry;
 
-public final class Registries {
-    public static final RegistryKey<GenericRegistry<String>> DEMO = new RegistryKey<GenericRegistry<String>>();
+import io.oliverj.module.network.packet.registry.PacketRegistry;
 
-    private Registries() {}
+public final class BuiltInRegistries {
+    public static final RegistryKey<GenericRegistry<String, String>> DEMO = new RegistryKey<>();
+
+    public static final RegistryKey<PacketRegistry> PACKET = new RegistryKey<>();
+
+    private BuiltInRegistries() {}
 }

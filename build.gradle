@@ -1,0 +1,32 @@
+plugins {
+    id "java"
+    id "application"
+    id "com.gradleup.shadow" version "9.0.0-rc1"
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation("org.apache.logging.log4j:log4j-api:2.24.1")
+    implementation("org.apache.logging.log4j:log4j-core:2.24.1")
+
+    implementation("org.jetbrains:annotations:24.0.0")
+    implementation("com.google.code.gson:gson:2.13.1")
+
+    implementation("io.netty:netty-all:4.2.2.Final")
+}
+
+application {
+    mainModule = "io.oliverj.module"
+    mainClass = "io.oliverj.module.Runner"
+}
+
+jar {
+    manifest {
+        attributes(
+                "Main-Class": "io.oliverj.module.Runner"
+        )
+    }
+}

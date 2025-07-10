@@ -1,6 +1,6 @@
-package io.oliverj.module.network.response;
+package io.oliverj.module.network.packet.response;
 
-import io.oliverj.module.network.Packet;
+import io.oliverj.module.network.packet.Packet;
 
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;

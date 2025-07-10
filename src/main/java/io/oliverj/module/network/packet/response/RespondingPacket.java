@@ -1,7 +1,7 @@
-package io.oliverj.module.network.response;
+package io.oliverj.module.network.packet.response;
 
 import io.netty.channel.ChannelOutboundInvoker;
-import io.oliverj.module.network.Packet;
+import io.oliverj.module.network.packet.Packet;
 
 import java.util.HashMap;
 import java.util.Map;

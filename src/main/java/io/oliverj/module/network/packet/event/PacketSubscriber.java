@@ -1,4 +1,4 @@
-package io.oliverj.module.network.event;
+package io.oliverj.module.network.packet.event;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

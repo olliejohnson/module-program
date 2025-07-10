@@ -1,7 +1,7 @@
-package io.oliverj.module.network.registry;
+package io.oliverj.module.network.packet.registry;
 
-import io.oliverj.module.network.Packet;
-import io.oliverj.module.network.exception.PacketRegistrationException;
+import io.oliverj.module.network.packet.Packet;
+import io.oliverj.module.network.packet.exception.PacketRegistrationException;
 import io.oliverj.module.registry.GenericRegistry;
 
 import java.lang.reflect.InvocationTargetException;

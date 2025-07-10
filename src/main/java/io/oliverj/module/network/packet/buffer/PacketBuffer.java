@@ -1,13 +1,13 @@
-package io.oliverj.module.network.buffer;
+package io.oliverj.module.network.packet.buffer;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.util.ByteProcessor;
-import io.oliverj.module.network.io.CallableDecoder;
-import io.oliverj.module.network.io.CallableEncoder;
-import io.oliverj.module.network.io.Decoder;
-import io.oliverj.module.network.io.Encoder;
+import io.oliverj.module.network.packet.io.CallableDecoder;
+import io.oliverj.module.network.packet.io.CallableEncoder;
+import io.oliverj.module.network.packet.io.Decoder;
+import io.oliverj.module.network.packet.io.Encoder;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,7 +1,7 @@
-package io.oliverj.module.network.io;
+package io.oliverj.module.network.packet.io;
 
 import io.netty.channel.ChannelOutboundInvoker;
-import io.oliverj.module.network.Packet;
+import io.oliverj.module.network.packet.Packet;
 
 /**
  * Used to directly respond to send packets

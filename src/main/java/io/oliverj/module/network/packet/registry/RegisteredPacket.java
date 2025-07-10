@@ -1,6 +1,6 @@
-package io.oliverj.module.network.registry;
+package io.oliverj.module.network.packet.registry;
 
-import io.oliverj.module.network.Packet;
+import io.oliverj.module.network.packet.Packet;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;

@@ -1,13 +1,13 @@
-package io.oliverj.module.network;
+package io.oliverj.module.network.packet;
 
-import io.oliverj.module.network.io.Decoder;
-import io.oliverj.module.network.io.Encoder;
+import io.oliverj.module.network.packet.io.Decoder;
+import io.oliverj.module.network.packet.io.Encoder;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class Packet implements Encoder, Decoder {
     /**
-     * SessionID is used for identification of the packet for use with {@link io.oliverj.module.network.io.Responder}
+     * SessionID is used for identification of the packet for use with {@link io.oliverj.module.network.packet.io.Responder}
      */
     private long sessionId = ThreadLocalRandom.current().nextLong();
 

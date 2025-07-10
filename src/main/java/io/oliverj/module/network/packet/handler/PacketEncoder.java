@@ -1,12 +1,12 @@
-package io.oliverj.module.network.handler;
+package io.oliverj.module.network.packet.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.EncoderException;
 import io.netty.handler.codec.MessageToByteEncoder;
-import io.oliverj.module.network.Packet;
-import io.oliverj.module.network.buffer.PacketBuffer;
-import io.oliverj.module.network.registry.PacketRegistry;
+import io.oliverj.module.network.packet.Packet;
+import io.oliverj.module.network.packet.buffer.PacketBuffer;
+import io.oliverj.module.network.packet.registry.PacketRegistry;
 
 public class PacketEncoder extends MessageToByteEncoder<Packet> {
 

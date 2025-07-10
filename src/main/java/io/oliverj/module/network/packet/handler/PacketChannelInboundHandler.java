@@ -1,10 +1,10 @@
-package io.oliverj.module.network.handler;
+package io.oliverj.module.network.packet.handler;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.oliverj.module.network.Packet;
-import io.oliverj.module.network.event.EventRegistry;
-import io.oliverj.module.network.response.RespondingPacket;
+import io.oliverj.module.network.packet.Packet;
+import io.oliverj.module.network.packet.event.EventRegistry;
+import io.oliverj.module.network.packet.response.RespondingPacket;
 
 public class PacketChannelInboundHandler extends SimpleChannelInboundHandler<Packet> {
 

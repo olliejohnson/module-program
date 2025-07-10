@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group = 'io.oliverj'
+version = '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation("org.apache.logging.log4j:log4j-core:2.23.1")
+
+    implementation rootProject
+}
+
+test {
+    useJUnitPlatform()
+}

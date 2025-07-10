@@ -1,8 +1,8 @@
-package io.oliverj.module.network.event;
+package io.oliverj.module.network.packet.event;
 
 import io.netty.channel.ChannelHandlerContext;
-import io.oliverj.module.network.Packet;
-import io.oliverj.module.network.io.Responder;
+import io.oliverj.module.network.packet.Packet;
+import io.oliverj.module.network.packet.io.Responder;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

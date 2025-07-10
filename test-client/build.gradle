@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'io.oliverj'
+version = 'unspecified'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+
+    implementation rootProject
+    implementation("io.netty:netty-all:4.2.2.Final")
+}
+
+application {
+    mainClass = "io.oliverj.client.Runnable"
+}
+
+test {
+    useJUnitPlatform()
+}

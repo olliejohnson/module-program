@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <bytecodeTargetLevel target="21">
+      <module name="modular.buildSrc" target="21" />
+      <module name="modular.buildSrc.main" target="21" />
+      <module name="modular.buildSrc.test" target="21" />
+      <module name="module-program.buildSrc" target="21" />
+      <module name="module-program.buildSrc.main" target="21" />
+      <module name="module-program.buildSrc.test" target="21" />
+    </bytecodeTargetLevel>
+  </component>
+</project>

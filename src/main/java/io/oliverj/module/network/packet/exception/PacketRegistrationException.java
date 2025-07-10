@@ -1,4 +1,4 @@
-package io.oliverj.module.network.exception;
+package io.oliverj.module.network.packet.exception;
 
 public class PacketRegistrationException extends RuntimeException {
   /**

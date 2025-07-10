@@ -1,15 +1,14 @@
-package io.oliverj.module.network.handler;
+package io.oliverj.module.network.packet.handler;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.DecoderException;
-import io.oliverj.module.network.Packet;
-import io.oliverj.module.network.buffer.PacketBuffer;
-import io.oliverj.module.network.registry.PacketRegistry;
+import io.oliverj.module.network.packet.Packet;
+import io.oliverj.module.network.packet.buffer.PacketBuffer;
+import io.oliverj.module.network.packet.registry.PacketRegistry;
 
 import java.util.List;
-import java.util.Objects;
 
 public class PacketDecoder extends ByteToMessageDecoder {
 
