@@ -12,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
+    public static final Logger LOGGER = LogManager.getLogger();
+
     private final PacketRegistry packetRegistry;
 
     public PacketEncoder(PacketRegistry packetRegistry) {

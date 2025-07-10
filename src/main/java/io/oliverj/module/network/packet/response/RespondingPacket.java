@@ -12,6 +12,8 @@ import java.util.function.Consumer;
 
 public class RespondingPacket<T extends Packet> {
 
+    public static final Logger LOGGER = LogManager.getLogger();
+
     private static final Map<Long, PendingResponse<?>> pendingResponses = new HashMap<>();
     private final Packet toSend;
     private final long timeout;

@@ -19,8 +19,15 @@ public class Runner {
 
         TestClient client = null;
 
+        Config config = ConfigLoader.load("config.json");
+
+        String host = config.host;
+        int port = config.port;
+        int maxAttempts = config.max_attempts;
+        int initialDelayMillis = config.initial_wait;
+
         try {
-            client = new TestClient(new EventRegistry(), future -> {
+            client = new TestClient(host, port, 5, 1000, new EventRegistry(), future -> {
                 System.out.println("Client running");
             });
         } catch (Exception e) {

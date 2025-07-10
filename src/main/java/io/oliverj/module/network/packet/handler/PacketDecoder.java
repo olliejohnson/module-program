@@ -14,6 +14,8 @@ import java.util.List;
 
 public class PacketDecoder extends ByteToMessageDecoder {
 
+    public static final Logger LOGGER = LogManager.getLogger();
+
     private final PacketRegistry packetRegistry;
 
     public PacketDecoder(PacketRegistry packetRegistry) {
