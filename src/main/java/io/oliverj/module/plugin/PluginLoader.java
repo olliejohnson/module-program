@@ -102,11 +102,9 @@ public class PluginLoader {
 
     public List<String> createLoadOrder() {
         Dag<String> dag = new HashDag<>();
-        for (PluginMetadata meta : Registry.getRegistry(BuiltInRegistries.PLUGIN).entries().stream().map(p -> p.second).toList()) {
-            for (String dep : meta.depends.keySet()) {
-                dag.put(dep, meta.identifier);
-            }
-        }
+        Registry.getRegistry(BuiltInRegistries.PLUGIN).entries().stream()
+                .map(pair -> pair.second)
+                .forEach(meta -> meta.depends.keySet().forEach(dep -> dag.put(dep, meta.identifier)));
         return dag.sort();
     }
 
@@ -122,7 +120,6 @@ public class PluginLoader {
 
     public void initAll() {
         List<String> order = createLoadOrder();
-
         order.forEach(this::init);
     }
 }

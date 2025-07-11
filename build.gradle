@@ -2,6 +2,51 @@ plugins {
     id "java"
     id "application"
     id "com.gradleup.shadow" version "9.0.0-rc1"
+    id "maven-publish"
+}
+
+group = "io.oliverj"
+version = "0.0.1"
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = "module-program"
+            from components.java
+            pom {
+                name = "Module Program"
+                description = "A loader and api for a modular plugin system"
+                developers {
+                    developer {
+                        id = "olliejohnson"
+                        name = "Oliver Johnson"
+                        email = "oliver@oliverj.io"
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username = "$usr"
+                password = "$pwd"
+            }
+            url = "http://localhost/releases"
+            allowInsecureProtocol = true
+        }
+    }
+}
+
+javadoc {
+    if(JavaVersion.current().isJava9Compatible()) {
+        options.addBooleanOption('html5', true)
+    }
 }
 
 repositories {
@@ -32,9 +77,9 @@ jar {
 }
 
 tasks.register("copyDemoPlugin", Copy) {
-    from 'demo-plugin/build/libs/demo-plugin-1.0.0.jar'
+    from 'demo-plugin/build/libs/demo-plugin-all.jar'
     into 'run/plugins'
-    dependsOn project(":demo-plugin").tasks.named("jar")
+    dependsOn project(":demo-plugin").tasks.named("shadowJar")
 }
 
 tasks.register("copyRunner", Copy) {

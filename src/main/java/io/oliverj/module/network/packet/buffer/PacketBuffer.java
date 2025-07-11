@@ -1343,13 +1343,13 @@ public class PacketBuffer extends ByteBuf {
     }
 
     /**
-     * Fills this buffer with <tt>NUL (0x00)</tt> starting at the specified
+     * Fills this buffer with {@code NUL 0x00} starting at the specified
      * absolute {@code index}.
      * This method does not modify {@code readerIndex} or {@code writerIndex} of
      * this buffer.
      *
      * @param index
-     * @param length the number of <tt>NUL</tt>s to write to the buffer
+     * @param length the number of {@code NUL}s to write to the buffer
      * @throws IndexOutOfBoundsException if the specified {@code index} is less than {@code 0} or
      *                                   if {@code index + length} is greater than {@code this.capacity}
      */
@@ -2109,13 +2109,13 @@ public class PacketBuffer extends ByteBuf {
     }
 
     /**
-     * Fills this buffer with <tt>NUL (0x00)</tt> starting at the current
+     * Fills this buffer with {@code NUL (0x00)} starting at the current
      * {@code writerIndex} and increases the {@code writerIndex} by the
      * specified {@code length}.
      * If {@code this.writableBytes} is less than {@code length}, {@link #ensureWritable(int)}
      * will be called in an attempt to expand capacity to accommodate.
      *
-     * @param length the number of <tt>NUL</tt>s to write to the buffer
+     * @param length the number of {@code NUL}s to write to the buffer
      */
     public ByteBuf writeZero(int length) {
         return internalBuffer.writeZero(length);

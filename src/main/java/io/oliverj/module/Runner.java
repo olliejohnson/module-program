@@ -15,16 +15,34 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.UUID;
 
+/**
+ * Runner class
+ */
 public class Runner {
 
+    /**
+     * Logger
+     */
     public static final Logger LOGGER = LogManager.getLogger();
 
+    /**
+     * Network Server
+     */
     private static volatile Server server;
 
+    /**
+     * Set the network server
+     * @param srv The server
+     */
     public static void setServer(Server srv) {
         server = srv;
     }
 
+    /**
+     * Main method
+     * @param args program args
+     * @throws Exception error
+     */
     public static void main(String[] args) throws Exception {
         LOGGER.info("Starting Application");
 
