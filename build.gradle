@@ -13,35 +13,35 @@ java {
     withSourcesJar()
 }
 
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            artifactId = "module-program"
-            from components.java
-            pom {
-                name = "Module Program"
-                description = "A loader and api for a modular plugin system"
-                developers {
-                    developer {
-                        id = "olliejohnson"
-                        name = "Oliver Johnson"
-                        email = "oliver@oliverj.io"
-                    }
-                }
-            }
-        }
-    }
-    repositories {
-        maven {
-            credentials {
-                username = "$usr"
-                password = "$pwd"
-            }
-            url = "http://localhost/releases"
-            allowInsecureProtocol = true
-        }
-    }
-}
+//publishing {
+//    publications {
+//        mavenJava(MavenPublication) {
+//            artifactId = "module-program"
+//            from components.java
+//            pom {
+//                name = "Module Program"
+//                description = "A loader and api for a modular plugin system"
+//                developers {
+//                    developer {
+//                        id = "olliejohnson"
+//                        name = "Oliver Johnson"
+//                        email = "oliver@oliverj.io"
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    repositories {
+//        maven {
+//            credentials {
+//                username = "$usr"
+//                password = "$pwd"
+//            }
+//            url = "http://localhost/releases"
+//            allowInsecureProtocol = true
+//        }
+//    }
+//}
 
 javadoc {
     if(JavaVersion.current().isJava9Compatible()) {

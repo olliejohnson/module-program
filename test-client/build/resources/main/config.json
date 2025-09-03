@@ -1,0 +1,6 @@
+{
+  "host": "127.0.0.1",
+  "port": 1234,
+  "max_attempts": 5,
+  "initial_wait": 1000
+}

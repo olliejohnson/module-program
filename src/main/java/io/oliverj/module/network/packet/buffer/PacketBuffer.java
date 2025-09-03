@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unused")
 public class PacketBuffer extends ByteBuf {
 
     private final ByteBuf internalBuffer;
@@ -42,7 +43,6 @@ public class PacketBuffer extends ByteBuf {
      * If {@code this.writableBytes} is less than {code 16}, {@link #ensureWritable(int)}
      * will be called in an attempt to expand capacity to accommodate to ensure the full UUID has enough space.
      *
-     * @param value
      */
     public void writeUUID(UUID value) {
         if (writableBytes() < 16) {
@@ -197,6 +197,7 @@ public class PacketBuffer extends ByteBuf {
      * @deprecated use the Little Endian accessors, e.g. {@code getShortLE}, {@code getIntLE}
      * instead of creating a buffer with swapped {@code endianness}.
      */
+    @Deprecated
     public ByteOrder order() {
         return internalBuffer.order();
     }
@@ -213,6 +214,7 @@ public class PacketBuffer extends ByteBuf {
      * @deprecated use the Little Endian accessors, e.g. {@code getShortLE}, {@code getIntLE}
      * instead of creating a buffer with swapped {@code endianness}.
      */
+    @Deprecated
     public ByteBuf order(ByteOrder endianness) {
         return internalBuffer.order(endianness);
     }

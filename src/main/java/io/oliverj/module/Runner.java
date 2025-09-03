@@ -7,6 +7,7 @@ import io.oliverj.module.plugin.PluginRegistry;
 import io.oliverj.module.registry.BuiltInRegistries;
 import io.oliverj.module.registry.GenericRegistry;
 import io.oliverj.module.registry.Registry;
+import io.oliverj.module.registry.RegistryKey;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -46,7 +47,7 @@ public class Runner {
     public static void main(String[] args) throws Exception {
         LOGGER.info("Starting Application");
 
-        Registry.addRegister(BuiltInRegistries.DEMO, new GenericRegistry<>());
+        Registry.addRegister(RegistryKey.ofIdentifier("demo"), new GenericRegistry<>());
         Registry.addRegister(BuiltInRegistries.PACKET, new PacketRegistry());
         Registry.addRegister(BuiltInRegistries.PLUGIN, new PluginRegistry());
 
@@ -66,17 +67,13 @@ public class Runner {
 
         frame.add(panel);
 
-        for (String name : BuiltInRegistries.DEMO.get().entries()) {
+        for (String name : RegistryKey.<GenericRegistry<String, String>>ofIdentifier("demo").get().entries()) {
             Label label = new Label(name);
 
             panel.add(label);
         }
 
-        Thread network = new Thread(() -> {
-             setServer(new Server(future -> {
-                 LOGGER.info("Server started");
-             }));
-        }, "network");
+        Thread network = new Thread(() -> setServer(new Server(future -> LOGGER.info("Server started"))), "network");
 
         network.start();
 
