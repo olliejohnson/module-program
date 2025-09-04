@@ -1,5 +1,0 @@
-Manifest-Version: 1.0
-Main-Class: io.oliverj.module.Runner
-Classpath: libs/*
-Multi-Release: true
-
