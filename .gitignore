@@ -24,3 +24,10 @@
 .idea/**/build
 
 .idea/runConfigurations/
+
+.gradle/
+**/.gradle/
+build/
+**/build/
+run/**
+!run
