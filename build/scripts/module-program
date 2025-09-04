@@ -114,7 +114,9 @@ case "$( uname )" in                #(
   NONSTOP* )        nonstop=true ;;
 esac
 
-CLASSPATH=$APP_HOME/lib/module-program.jar
+CLASSPATH=$APP_HOME/lib/netty-all-4.2.2.Final.jar
+
+MODULE_PATH=$APP_HOME/lib/module-program-0.0.1.jar:$APP_HOME/lib/log4j-core-2.24.1.jar:$APP_HOME/lib/log4j-api-2.24.1.jar:$APP_HOME/lib/api-0.0.1.jar:$APP_HOME/lib/annotations-24.0.0.jar:$APP_HOME/lib/gson-2.13.1.jar:$APP_HOME/lib/error_prone_annotations-2.38.0.jar:$APP_HOME/lib/netty-transport-native-epoll-4.2.2.Final-linux-x86_64.jar:$APP_HOME/lib/netty-transport-native-epoll-4.2.2.Final-linux-aarch_64.jar:$APP_HOME/lib/netty-transport-native-epoll-4.2.2.Final-linux-riscv64.jar:$APP_HOME/lib/netty-transport-native-io_uring-4.2.2.Final-linux-x86_64.jar:$APP_HOME/lib/netty-transport-native-io_uring-4.2.2.Final-linux-aarch_64.jar:$APP_HOME/lib/netty-transport-native-io_uring-4.2.2.Final-linux-riscv64.jar:$APP_HOME/lib/netty-transport-native-kqueue-4.2.2.Final-osx-x86_64.jar:$APP_HOME/lib/netty-transport-native-kqueue-4.2.2.Final-osx-aarch_64.jar:$APP_HOME/lib/netty-transport-classes-epoll-4.2.2.Final.jar:$APP_HOME/lib/netty-transport-classes-io_uring-4.2.2.Final.jar:$APP_HOME/lib/netty-transport-classes-kqueue-4.2.2.Final.jar:$APP_HOME/lib/netty-resolver-dns-native-macos-4.2.2.Final-osx-x86_64.jar:$APP_HOME/lib/netty-resolver-dns-native-macos-4.2.2.Final-osx-aarch_64.jar:$APP_HOME/lib/netty-resolver-dns-classes-macos-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.2.Final-linux-x86_64.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.2.Final-linux-aarch_64.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.2.Final-osx-x86_64.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.2.Final-osx-aarch_64.jar:$APP_HOME/lib/netty-codec-native-quic-4.2.2.Final-windows-x86_64.jar:$APP_HOME/lib/netty-codec-classes-quic-4.2.2.Final.jar:$APP_HOME/lib/netty-resolver-dns-4.2.2.Final.jar:$APP_HOME/lib/netty-handler-4.2.2.Final.jar:$APP_HOME/lib/netty-transport-native-unix-common-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-dns-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-base-4.2.2.Final.jar:$APP_HOME/lib/netty-transport-4.2.2.Final.jar:$APP_HOME/lib/netty-buffer-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-haproxy-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-compression-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-http-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-http2-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-http3-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-memcache-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-mqtt-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-redis-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-smtp-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-socks-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-stomp-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-xml-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-protobuf-4.2.2.Final.jar:$APP_HOME/lib/netty-codec-marshalling-4.2.2.Final.jar:$APP_HOME/lib/netty-resolver-4.2.2.Final.jar:$APP_HOME/lib/netty-common-4.2.2.Final.jar:$APP_HOME/lib/netty-handler-proxy-4.2.2.Final.jar:$APP_HOME/lib/netty-handler-ssl-ocsp-4.2.2.Final.jar:$APP_HOME/lib/netty-transport-rxtx-4.2.2.Final.jar:$APP_HOME/lib/netty-transport-sctp-4.2.2.Final.jar:$APP_HOME/lib/netty-transport-udt-4.2.2.Final.jar
 
 
 # Determine the Java command to use to start the JVM.
@@ -173,7 +175,7 @@ fi
 if "$cygwin" || "$msys" ; then
     APP_HOME=$( cygpath --path --mixed "$APP_HOME" )
     CLASSPATH=$( cygpath --path --mixed "$CLASSPATH" )
-
+    MODULE_PATH=$( cygpath --path --mixed "$MODULE_PATH" )
     JAVACMD=$( cygpath --unix "$JAVACMD" )
 
     # Now convert the arguments - kludge to limit ourselves to /bin/sh
@@ -212,7 +214,8 @@ DEFAULT_JVM_OPTS=""
 
 set -- \
         -classpath "$CLASSPATH" \
-        io.oliverj.module.Runner \
+        --module-path "$MODULE_PATH" \
+        --module io.oliverj.module/io.oliverj.module.Runner \
         "$@"
 
 # Stop when "xargs" is not available.

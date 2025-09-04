@@ -1,5 +1,7 @@
 package io.oliverj.module.registry;
 
+import io.oliverj.module.util.Identifier;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -7,7 +9,7 @@ import java.util.function.Supplier;
 public class Registry {
 
     public static final Map<RegistryKey<?>, ? super GenericRegistry<?, ?>> registries = new HashMap<>();
-    public static final Map<String, RegistryKey<? extends GenericRegistry<?, ?>>> keys = new HashMap<>();
+    public static final Map<Identifier, RegistryKey<? extends GenericRegistry<?, ?>>> keys = new HashMap<>();
 
     public static <T extends GenericRegistry<?, ?>> void addRegister(RegistryKey<T> key, T registry) {
         registries.put(key, registry);
@@ -24,7 +26,11 @@ public class Registry {
         return (T) registries.get(key);
     }
 
-    public static RegistryKey<? extends GenericRegistry<?, ?>> getKey(String id) {
+    public static RegistryKey<? extends GenericRegistry<?, ?>> getKey(Identifier id) {
         return keys.get(id);
+    }
+
+    public static RegistryKey<? extends GenericRegistry<?, ?>> getKey(String id) {
+        return keys.get(Identifier.parse(id));
     }
 }

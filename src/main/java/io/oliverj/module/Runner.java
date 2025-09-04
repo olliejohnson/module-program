@@ -8,6 +8,7 @@ import io.oliverj.module.registry.BuiltInRegistries;
 import io.oliverj.module.registry.GenericRegistry;
 import io.oliverj.module.registry.Registry;
 import io.oliverj.module.registry.RegistryKey;
+import io.oliverj.module.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,7 +48,6 @@ public class Runner {
     public static void main(String[] args) throws Exception {
         LOGGER.info("Starting Application");
 
-        Registry.addRegister(RegistryKey.ofIdentifier("demo"), new GenericRegistry<>());
         Registry.addRegister(BuiltInRegistries.PACKET, new PacketRegistry());
         Registry.addRegister(BuiltInRegistries.PLUGIN, new PluginRegistry());
 
@@ -61,42 +61,14 @@ public class Runner {
 
         loader.initAll();
 
-        Frame frame = new Frame("Module Runner");
-
-        Panel panel = new Panel();
-
-        frame.add(panel);
-
-        for (String name : RegistryKey.<GenericRegistry<String, String>>ofIdentifier("demo").get().entries()) {
-            Label label = new Label(name);
-
-            panel.add(label);
-        }
-
         Thread network = new Thread(() -> setServer(new Server(future -> LOGGER.info("Server started"))), "network");
 
         network.start();
 
-        Button button = new Button("Send packet");
-        button.addActionListener(e -> {
-            TestPacket packet = new TestPacket().setUuid(UUID.randomUUID());
-            ConnectionManager.get("test-client").writeAndFlush(packet);
-        });
-
-        panel.add(button);
-
-        frame.setSize(300, 300);
-
-        frame.setVisible(true);
-
-        frame.addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(WindowEvent e) {
-                LOGGER.info("Stopping application");
-                server.shutdown();
-                LOGGER.info("Exiting");
-                System.exit(0);
+        if (Registry.getRegistry(BuiltInRegistries.PLUGIN).containsKey("demo")) {
+            for (String name : RegistryKey.ofIdentifier("core:demo", String.class).get().entries()) {
+                LOGGER.info(name);
             }
-        });
+        }
     }
 }

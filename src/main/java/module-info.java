@@ -9,6 +9,5 @@ module io.oliverj.module {
     requires io.netty.common;
     requires io.netty.codec;
     requires io.netty.handler;
-
-    exports io.oliverj.module.api;
+    requires module.program.api.main;
 }

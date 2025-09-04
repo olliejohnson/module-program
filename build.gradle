@@ -9,7 +9,7 @@ group = "io.oliverj"
 version = "0.0.1"
 
 java {
-    withJavadocJar()
+    //withJavadocJar()
     withSourcesJar()
 }
 
@@ -56,6 +56,7 @@ repositories {
 dependencies {
     implementation("org.apache.logging.log4j:log4j-api:2.24.1")
     implementation("org.apache.logging.log4j:log4j-core:2.24.1")
+    implementation project(":api")
 
     implementation("org.jetbrains:annotations:24.0.0")
     implementation("com.google.code.gson:gson:2.13.1")
@@ -79,7 +80,7 @@ jar {
 tasks.register("copyDemoPlugin", Copy) {
     from 'demo-plugin/build/libs/demo-plugin-all.jar'
     into 'run/plugins'
-    dependsOn project(":demo-plugin").tasks.named("shadowJar")
+    dependsOn project(":demo-plugin").tasks.named("jar")
 }
 
 tasks.register("copyRunner", Copy) {
@@ -89,6 +90,7 @@ tasks.register("copyRunner", Copy) {
 }
 
 tasks.register("runDemo", JavaExec) {
+    dependsOn build
     dependsOn copyDemoPlugin
     dependsOn copyRunner
 

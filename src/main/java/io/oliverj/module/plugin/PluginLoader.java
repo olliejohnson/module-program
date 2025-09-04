@@ -1,7 +1,6 @@
 package io.oliverj.module.plugin;
 
 import com.google.gson.Gson;
-import io.oliverj.module.PluginMetadata;
 import io.oliverj.module.api.BasePlugin;
 import io.oliverj.module.plugin.struct.Dag;
 import io.oliverj.module.plugin.struct.HashDag;
@@ -20,22 +19,17 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class PluginLoader {
 
     public static final Logger LOGGER = LogManager.getLogger();
 
-    private Map<String, Pair<BasePlugin, PluginMetadata>> plugins = new HashMap<>();
+    private final Map<String, Pair<BasePlugin, PluginMetadata>> plugins = new HashMap<>();
 
     private final String plugin_dir;
 
     public PluginLoader(@Nullable String dir) {
-        if (dir == null) {
-            plugin_dir = "plugins";
-        } else {
-            plugin_dir = dir;
-        }
+        plugin_dir = Objects.requireNonNullElse(dir, "plugins");
     }
 
     public void loadAll() throws URISyntaxException, IOException {
@@ -47,15 +41,15 @@ public class PluginLoader {
 
         File pluginsFolder = new File(rootFolder.toPath() + "/" + plugin_dir);
 
-        for (File plugin : pluginsFolder.listFiles()) {
+        for (File plugin : Objects.requireNonNull(pluginsFolder.listFiles())) {
             load(plugin);
         }
     }
 
     public void load(File plugin) throws IOException {
-        URLClassLoader classLoader = null;
+        PluginClassLoader classLoader;
         try {
-            classLoader = new URLClassLoader(new URL[]{plugin.toURI().toURL()});
+            classLoader = new PluginClassLoader(plugin);
         } catch (MalformedURLException e) {
             // Something REALLY went wrong
             throw new RuntimeException(e);
@@ -64,6 +58,9 @@ public class PluginLoader {
         InputStream metaIn = classLoader.getResourceAsStream("plugin.json");
 
         try {
+            if (metaIn == null) {
+                throw new FileNotFoundException("Failed to load plugin data from: " + plugin);
+            }
             char[] buffer = new char[metaIn.available()];
             StringBuilder out = new StringBuilder();
             Reader in = new InputStreamReader(metaIn, StandardCharsets.UTF_8);
@@ -88,7 +85,7 @@ public class PluginLoader {
         } catch (IOException e) {
             LOGGER.error("Failed to load plugin metadata", e);
         } catch (ClassNotFoundException e) {
-            LOGGER.error("Cannot find main entrypoint in", e);
+            LOGGER.error("Cannot find main entrypoint", e);
         } catch (InstantiationException | InvocationTargetException e) {
             LOGGER.error("failed to instantiate Plugin main entrypoint", e);
         } catch (IllegalAccessException e) {

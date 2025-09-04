@@ -7,3 +7,4 @@ pluginManagement {
 rootProject.name = "module-program"
 include 'demo-plugin'
 include 'test-client'
+include 'api'
