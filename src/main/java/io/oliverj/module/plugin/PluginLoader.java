@@ -7,22 +7,21 @@ import io.oliverj.module.plugin.struct.HashDag;
 import io.oliverj.module.registry.BuiltInRegistries;
 import io.oliverj.module.registry.Registry;
 import io.oliverj.module.util.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PluginLoader {
 
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger(PluginLoader.class);
 
     private final Map<String, Pair<BasePlugin, PluginMetadata>> plugins = new HashMap<>();
 
@@ -118,5 +117,10 @@ public class PluginLoader {
     public void initAll() {
         List<String> order = createLoadOrder();
         order.forEach(this::init);
+    }
+
+    @SuppressWarnings("unused")
+    public Map<String, Pair<BasePlugin, PluginMetadata>> getPlugins() {
+        return plugins;
     }
 }

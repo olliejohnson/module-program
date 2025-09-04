@@ -7,14 +7,14 @@ import io.netty.handler.codec.DecoderException;
 import io.oliverj.module.network.packet.Packet;
 import io.oliverj.module.network.packet.buffer.PacketBuffer;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 public class PacketDecoder extends ByteToMessageDecoder {
 
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger(PacketDecoder.class);
 
     private final PacketRegistry packetRegistry;
 

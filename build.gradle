@@ -1,7 +1,5 @@
 plugins {
     id "java"
-    id "application"
-    id "com.gradleup.shadow" version "9.0.0-rc1"
     id "maven-publish"
 }
 
@@ -54,8 +52,8 @@ repositories {
 }
 
 dependencies {
-    implementation("org.apache.logging.log4j:log4j-api:2.24.1")
-    implementation("org.apache.logging.log4j:log4j-core:2.24.1")
+    compileOnly("org.slf4j:slf4j-api:2.0.17")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
     implementation project(":api")
 
     implementation("org.jetbrains:annotations:24.0.0")
@@ -64,15 +62,17 @@ dependencies {
     implementation("io.netty:netty-all:4.2.2.Final")
 }
 
-application {
-    mainModule = "io.oliverj.module"
-    mainClass = "io.oliverj.module.Runner"
+tasks.register("copyLibs", Copy) {
+    into "run/libs"
+    from sourceSets.main.compileClasspath
 }
 
 jar {
+    dependsOn copyLibs
     manifest {
         attributes(
-                "Main-Class": "io.oliverj.module.Runner"
+                "Main-Class": "io.oliverj.module.Runner",
+                "Class-Path": fileTree("run/libs").collect { "libs/" + it.name }.join(' ')
         )
     }
 }
@@ -84,9 +84,9 @@ tasks.register("copyDemoPlugin", Copy) {
 }
 
 tasks.register("copyRunner", Copy) {
-    from 'build/libs/module-program-0.0.1-all.jar'
+    from 'build/libs/module-program-0.0.1.jar'
     into 'run'
-    dependsOn shadowJar
+    dependsOn jar
 }
 
 tasks.register("runDemo", JavaExec) {
@@ -94,7 +94,7 @@ tasks.register("runDemo", JavaExec) {
     dependsOn copyDemoPlugin
     dependsOn copyRunner
 
-    classpath = files("run/module-program-0.0.1-all.jar")
-    classpath += sourceSets.main.runtimeClasspath
+    classpath = files("run/module-program-0.0.1.jar")
+    classpath += sourceSets.main.compileClasspath
     mainClass = "io.oliverj.module.Runner"
 }

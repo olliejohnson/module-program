@@ -5,17 +5,12 @@ import io.oliverj.module.network.packet.registry.PacketRegistry;
 import io.oliverj.module.plugin.PluginLoader;
 import io.oliverj.module.plugin.PluginRegistry;
 import io.oliverj.module.registry.BuiltInRegistries;
-import io.oliverj.module.registry.GenericRegistry;
 import io.oliverj.module.registry.Registry;
 import io.oliverj.module.registry.RegistryKey;
-import io.oliverj.module.util.Identifier;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.UUID;
 
 /**
  * Runner class
@@ -25,7 +20,7 @@ public class Runner {
     /**
      * Logger
      */
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger(Runner.class);
 
     /**
      * Network Server
@@ -70,5 +65,10 @@ public class Runner {
                 LOGGER.info(name);
             }
         }
+    }
+
+    @SuppressWarnings("unused")
+    public static Server getServer() {
+        return server;
     }
 }

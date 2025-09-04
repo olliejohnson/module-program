@@ -4,19 +4,17 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 import io.netty.handler.logging.LoggingHandler;
 import io.oliverj.module.network.handler.SessionEstablishListener;
-import io.oliverj.module.network.packet.event.EventRegistry;
-import io.oliverj.module.network.packet.handler.PacketChannelInboundHandler;
 import io.oliverj.module.network.packet.handler.PacketDecoder;
 import io.oliverj.module.network.packet.handler.PacketEncoder;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
 import io.oliverj.module.registry.BuiltInRegistries;
 import io.oliverj.module.registry.Registry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerInitializer extends ChannelInitializer<Channel> {
 
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger(ServerInitializer.class);
 
     private final PacketRegistry registry;
 
@@ -25,7 +23,7 @@ public class ServerInitializer extends ChannelInitializer<Channel> {
     }
 
     @Override
-    protected void initChannel(Channel ch) throws Exception {
+    protected void initChannel(Channel ch) {
         ch.pipeline()
                 .addLast(new PacketEncoder(registry), new PacketDecoder(registry), new LoggingHandler(),
                         new SessionEstablishListener());

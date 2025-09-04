@@ -1,5 +1,7 @@
 module io.oliverj.module {
-    requires org.apache.logging.log4j;
+    exports io.oliverj.module.registry;
+    exports io.oliverj.module.util;
+
     requires com.google.gson;
     requires org.jetbrains.annotations;
     requires java.desktop;
@@ -10,4 +12,6 @@ module io.oliverj.module {
     requires io.netty.codec;
     requires io.netty.handler;
     requires module.program.api.main;
+    requires org.slf4j;
+    requires java.logging;
 }

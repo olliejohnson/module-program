@@ -2,8 +2,8 @@ package io.oliverj.module.network.packet.response;
 
 import io.netty.channel.ChannelOutboundInvoker;
 import io.oliverj.module.network.packet.Packet;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 public class RespondingPacket<T extends Packet> {
 
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger(RespondingPacket.class);
 
     private static final Map<Long, PendingResponse<?>> pendingResponses = new HashMap<>();
     private final Packet toSend;
@@ -27,10 +27,12 @@ public class RespondingPacket<T extends Packet> {
         this.callback = callback;
     }
 
+    @SuppressWarnings("unused")
     public RespondingPacket(Packet toSend, Class<T> responseType, Consumer<T> callback) {
         this(toSend, TimeUnit.SECONDS.toMillis(10), responseType, callback);
     }
 
+    @SuppressWarnings("unused")
     public void send(ChannelOutboundInvoker invoker) {
         LOGGER.debug("Sending packet");
         invoker.writeAndFlush(toSend);
@@ -53,7 +55,7 @@ public class RespondingPacket<T extends Packet> {
             if (!pendingResponse.isExpired()) {
                 return;
             }
-            RespondingPacket.pendingResponses.remove(sessionId.longValue());
+            RespondingPacket.pendingResponses.remove(sessionId);
         });
     }
 }

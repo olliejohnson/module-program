@@ -7,12 +7,12 @@ import io.netty.handler.codec.MessageToByteEncoder;
 import io.oliverj.module.network.packet.Packet;
 import io.oliverj.module.network.packet.buffer.PacketBuffer;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PacketEncoder extends MessageToByteEncoder<Packet> {
 
-    public static final Logger LOGGER = LogManager.getLogger();
+    public static final Logger LOGGER = LoggerFactory.getLogger(PacketEncoder.class);
 
     private final PacketRegistry packetRegistry;
 
@@ -20,7 +20,7 @@ public class PacketEncoder extends MessageToByteEncoder<Packet> {
         this.packetRegistry = packetRegistry;
     }
 
-    protected void encode(ChannelHandlerContext channelHandlerContext, Packet packet, ByteBuf byteBuf) throws Exception {
+    protected void encode(ChannelHandlerContext channelHandlerContext, Packet packet, ByteBuf byteBuf) {
         LOGGER.debug("Encoding packet");
         int packetId = packetRegistry.getPacketId(packet.getClass());
         if (packetId < 0) {
