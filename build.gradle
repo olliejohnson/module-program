@@ -78,13 +78,13 @@ jar {
 }
 
 tasks.register("copyDemoPlugin", Copy) {
-    from 'demo-plugin/build/libs/demo-plugin-all.jar'
+    from 'demo-plugin/build/libs/demo-plugin-0.0.1.jar'
     into 'run/plugins'
     dependsOn project(":demo-plugin").tasks.named("jar")
 }
 
 tasks.register("copyRunner", Copy) {
-    from 'build/libs/module-program-all.jar'
+    from 'build/libs/module-program-0.0.1-all.jar'
     into 'run'
     dependsOn shadowJar
 }
@@ -94,7 +94,7 @@ tasks.register("runDemo", JavaExec) {
     dependsOn copyDemoPlugin
     dependsOn copyRunner
 
-    classpath = files("run/module-program-all.jar")
+    classpath = files("run/module-program-0.0.1-all.jar")
     classpath += sourceSets.main.runtimeClasspath
     mainClass = "io.oliverj.module.Runner"
 }
