@@ -51,4 +51,14 @@ public class RegistryKey<T extends GenericRegistry<?, ?>> {
     public Identifier getId() {
         return this.id;
     }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return id.toString();
+    }
 }

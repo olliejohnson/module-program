@@ -37,4 +37,6 @@ public class GenericRegistry<K, V> {
     }
 
     public Map<K, V> getRawRegistry() { return registry; }
+
+    public void deregister(K key) { registry.remove(key); }
 }

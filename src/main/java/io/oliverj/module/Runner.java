@@ -3,14 +3,17 @@ package io.oliverj.module;
 import io.oliverj.module.network.*;
 import io.oliverj.module.network.packet.registry.PacketRegistry;
 import io.oliverj.module.plugin.PluginLoader;
+import io.oliverj.module.plugin.PluginManager;
 import io.oliverj.module.plugin.PluginRegistry;
 import io.oliverj.module.registry.BuiltInRegistries;
 import io.oliverj.module.registry.Registry;
 import io.oliverj.module.registry.RegistryKey;
+import io.oliverj.module.util.Identifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.util.stream.Collectors;
 
 /**
  * Runner class
@@ -50,7 +53,7 @@ public class Runner {
         BuiltInRegistries.PACKET.get().registerPacket(PacketIds.VALID, ValidPacket.class);
         BuiltInRegistries.PACKET.get().registerPacket(PacketIds.ESTABLISH, EstablishPacket.class);
 
-        PluginLoader loader = new PluginLoader(null);
+        PluginLoader loader = new PluginLoader();
 
         loader.loadAll();
 
@@ -60,8 +63,13 @@ public class Runner {
 
         network.start();
 
-        if (Registry.getRegistry(BuiltInRegistries.PLUGIN).containsKey("demo")) {
-            for (String name : RegistryKey.ofIdentifier("core:demo", String.class).get().entries()) {
+        LOGGER.info("PLUGINS: {}", Registry.getRegistry(BuiltInRegistries.PLUGIN).entries().stream().map(s -> s.second.name).collect(Collectors.joining(", ")));
+        LOGGER.info("Keys: {}", String.join(", ", Registry.getRegistry(BuiltInRegistries.PLUGIN).keys()));
+
+        LOGGER.info("Searching for Demo plugin");
+        if (PluginManager.exists("io.oliverj.demo-plugin")) {
+            LOGGER.info("Loading Demo registry");
+            for (String name : Registry.<String>getKey(Identifier.ofDefault("demo")).get().entries()) {
                 LOGGER.info(name);
             }
         }

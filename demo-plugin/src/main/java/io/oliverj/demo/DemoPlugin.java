@@ -20,18 +20,15 @@ public class DemoPlugin extends BasePlugin {
     public void init() {
         LOGGER.info("Loading Demo Plugin");
 
-        try {
-            ClassLoader cl = this.getClass().getClassLoader();
-
-            LOGGER.info("Using {} classloader", cl);
-            LOGGER.info("Registries classloader {}", Registries.class.getClassLoader());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
         Registry.addRegister(Registries.DEMO, new GenericRegistry<>());
 
         Registry.register(Registries.DEMO, id("page"), "demo-plugin");
         Registry.register(Registries.DEMO, id("de"), "demo-plugin2");
+    }
+
+    @Override
+    public void disable() {
+        LOGGER.info("Disabling Demo Plugin");
+        Registry.removeRegister(Registries.DEMO);
     }
 }

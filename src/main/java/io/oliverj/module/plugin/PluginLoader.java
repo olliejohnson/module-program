@@ -1,6 +1,5 @@
 package io.oliverj.module.plugin;
 
-import com.google.gson.Gson;
 import io.oliverj.module.api.BasePlugin;
 import io.oliverj.module.plugin.struct.Dag;
 import io.oliverj.module.plugin.struct.HashDag;
@@ -16,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PluginLoader {
@@ -27,11 +25,18 @@ public class PluginLoader {
 
     private final String plugin_dir;
 
-    public PluginLoader(@Nullable String dir) {
-        plugin_dir = Objects.requireNonNullElse(dir, "plugins");
+    private final PluginClassLoader loader;
+
+    public PluginLoader() {
+        this(null);
     }
 
-    public void loadAll() throws URISyntaxException, IOException {
+    public PluginLoader(@Nullable String dir) {
+        plugin_dir = Objects.requireNonNullElse(dir, "plugins");
+        loader = new PluginClassLoader();
+    }
+
+    public void loadAll() throws URISyntaxException {
         LOGGER.info("Starting Plugin Discovery");
 
         URL loc = getClass().getProtectionDomain().getCodeSource().getLocation();
@@ -45,44 +50,26 @@ public class PluginLoader {
         }
     }
 
-    public void load(File plugin) throws IOException {
-        PluginClassLoader classLoader;
+    public void load(File plugin) {
+        LOGGER.info("Loading plugin at {}", plugin.getPath());
         try {
-            classLoader = new PluginClassLoader(plugin);
+            loader.addPlugin(plugin);
         } catch (MalformedURLException e) {
             // Something REALLY went wrong
             throw new RuntimeException(e);
         }
 
-        InputStream metaIn = classLoader.getResourceAsStream("plugin.json");
-
         try {
-            if (metaIn == null) {
-                throw new FileNotFoundException("Failed to load plugin data from: " + plugin);
-            }
-            char[] buffer = new char[metaIn.available()];
-            StringBuilder out = new StringBuilder();
-            Reader in = new InputStreamReader(metaIn, StandardCharsets.UTF_8);
-            for (int numRead; (numRead = in.read(buffer, 0, buffer.length)) > 0; ) {
-                out.append(buffer, 0, numRead);
-            }
-
-            String meta = out.toString();
-
-            Gson g = new Gson();
-
-            PluginMetadata metadata = g.fromJson(meta, PluginMetadata.class);
+            PluginMetadata metadata = loader.getMeta(plugin);
 
             LOGGER.info("Loading {} ({}) version {}", metadata.name, metadata.identifier, metadata.version);
 
             @SuppressWarnings("unchecked")
-            Class<BasePlugin> clazz = (Class<BasePlugin>) classLoader.loadClass(metadata.entrypoints.get("main"));
+            Class<BasePlugin> clazz = (Class<BasePlugin>) loader.loadClass(metadata.entrypoints.get("main"));
 
             BasePlugin pluginClass = clazz.getDeclaredConstructor().newInstance();
 
             Registry.register(BuiltInRegistries.PLUGIN, metadata.identifier, Pair.of(pluginClass, metadata));
-        } catch (IOException e) {
-            LOGGER.error("Failed to load plugin metadata", e);
         } catch (ClassNotFoundException e) {
             LOGGER.error("Cannot find main entrypoint", e);
         } catch (InstantiationException | InvocationTargetException e) {
@@ -92,8 +79,7 @@ public class PluginLoader {
         } catch (NoSuchMethodException e) {
             LOGGER.error("Method '<init>' does not exist", e);
         }
-
-        classLoader.close();
+        LOGGER.info("Finished loading {}", loader.getMeta(plugin).name);
     }
 
     public List<String> createLoadOrder() {
@@ -112,6 +98,7 @@ public class PluginLoader {
 
         LOGGER.info("Initializing {} ({}) version {}", meta.name, meta.identifier, meta.version);
         Registry.getRegistry(BuiltInRegistries.PLUGIN).get(identifier).first.init();
+        LOGGER.info("Finished initialization of {} ({})", meta.name, meta.identifier);
     }
 
     public void initAll() {

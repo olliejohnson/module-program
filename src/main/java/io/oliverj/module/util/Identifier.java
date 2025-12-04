@@ -46,4 +46,13 @@ public class Identifier {
     public int hashCode() {
         return Objects.hash(namespace, key);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Identifier obji) {
+            return this.key.equals(obji.key) &&
+                    this.namespace.equals(obji.namespace);
+        }
+        return this.hashCode() == obj.hashCode();
+    }
 }

@@ -11,4 +11,9 @@ public abstract class BasePlugin {
      * Init method. Called when plugin is loaded.
      */
     public abstract void init();
+
+    /**
+     * Disable method. Called when plugin is disabled.
+     */
+    public abstract void disable();
 }

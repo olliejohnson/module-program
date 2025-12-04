@@ -26,11 +26,16 @@ public class Registry {
         return (T) registries.get(key);
     }
 
-    public static RegistryKey<? extends GenericRegistry<?, ?>> getKey(Identifier id) {
-        return keys.get(id);
+    public static <T> RegistryKey<? extends GenericRegistry<?, T>> getKey(Identifier id) {
+        return (RegistryKey<? extends GenericRegistry<?, T>>) keys.get(id);
     }
 
-    public static RegistryKey<? extends GenericRegistry<?, ?>> getKey(String id) {
-        return keys.get(Identifier.parse(id));
+    public static <T> RegistryKey<? extends GenericRegistry<?, T>> getKey(String id) {
+        return (RegistryKey<? extends GenericRegistry<?, T>>) keys.get(Identifier.parse(id));
+    }
+
+    public static <T extends GenericRegistry<?, ?>> void removeRegister(RegistryKey<T> key) {
+        registries.remove(key);
+        keys.remove(key.getId());
     }
 }
