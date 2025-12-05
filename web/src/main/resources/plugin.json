@@ -1,0 +1,12 @@
+{
+  "name": "Web",
+  "identifier": "io.oliverj.web",
+  "version": "0.0.1-alpha+local",
+  "entrypoints": {
+    "main": "io.oliverj.web.WebPlugin"
+  },
+  "depends": {
+    "core": "^1.0.0",
+    "loader": "^1.0.0"
+  }
+}

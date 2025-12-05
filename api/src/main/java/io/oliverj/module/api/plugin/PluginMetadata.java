@@ -1,4 +1,4 @@
-package io.oliverj.module.plugin;
+package io.oliverj.module.api.plugin;
 
 import java.util.Map;
 

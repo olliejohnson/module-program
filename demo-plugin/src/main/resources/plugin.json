@@ -7,6 +7,7 @@
   },
   "depends": {
     "core": "^0.0.1",
-    "loader": "^0.0.1"
+    "loader": "^0.0.1",
+    "io.oliverj.web": "^0.0.1"
   }
 }

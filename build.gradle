@@ -89,10 +89,18 @@ tasks.register("copyRunner", Copy) {
     dependsOn jar
 }
 
+tasks.register("copyWeb", Copy) {
+    from 'web/build/libs/web-0.0.1.jar'
+    into 'run/plugins'
+    dependsOn project(":web").tasks.named("jar")
+    dependsOn project(":web").tasks.named("copyLibs")
+}
+
 tasks.register("runDemo", JavaExec) {
-    dependsOn build
     dependsOn copyDemoPlugin
     dependsOn copyRunner
+    dependsOn copyWeb
+    dependsOn build
 
     classpath = files("run/module-program-0.0.1.jar")
     classpath += sourceSets.main.compileClasspath

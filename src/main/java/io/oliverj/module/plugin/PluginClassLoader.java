@@ -2,6 +2,7 @@ package io.oliverj.module.plugin;
 
 
 import com.google.gson.Gson;
+import io.oliverj.module.api.plugin.PluginMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,6 +19,7 @@ public class PluginClassLoader extends URLClassLoader {
     Logger LOGGER = LoggerFactory.getLogger(PluginClassLoader.class);
 
     private final Map<File, PluginMetadata> metadataMap = new HashMap<>();
+    private final Map<String, URLClassLoader> resourceLoaders = new HashMap<>();
 
     public PluginClassLoader() {
         super(new URL[0], getSystemClassLoader());
@@ -60,7 +62,9 @@ public class PluginClassLoader extends URLClassLoader {
         String plugin_file = plugin.getName().substring(0, plugin.getName().length() - 4);
         LOGGER.info("Creating PluginClassLoader for {}", plugin_file);
 
-        InputStream metaIn = this.getResourceAsStream("plugin.json");
+        URLClassLoader metaLoader = new URLClassLoader(new URL[]{plugin.toURI().toURL()}, getSystemClassLoader());
+
+        InputStream metaIn = metaLoader.getResourceAsStream("plugin.json");
 
         try {
             if (metaIn == null) {
@@ -83,9 +87,15 @@ public class PluginClassLoader extends URLClassLoader {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        resourceLoaders.put(metadataMap.get(plugin).identifier, metaLoader);
     }
 
     public PluginMetadata getMeta(File plugin) {
         return metadataMap.get(plugin);
+    }
+
+    public InputStream getResource(String identifier, String path) {
+        return resourceLoaders.get(identifier).getResourceAsStream(path);
     }
 }

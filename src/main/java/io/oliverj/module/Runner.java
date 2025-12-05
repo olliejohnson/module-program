@@ -20,6 +20,8 @@ import java.util.stream.Collectors;
  */
 public class Runner {
 
+    public static final boolean DEBUG = true;
+
     /**
      * Logger
      */
@@ -56,6 +58,8 @@ public class Runner {
         PluginLoader loader = new PluginLoader();
 
         loader.loadAll();
+
+        LOGGER.info("Load Order: {}", loader.createLoadOrder());
 
         loader.initAll();
 

@@ -1,8 +1,9 @@
 package io.oliverj.module.plugin;
 
+import io.oliverj.module.api.plugin.PluginMetadata;
 import io.oliverj.module.registry.BuiltInRegistries;
-import io.oliverj.module.util.Identifier;
 
+import java.io.InputStream;
 import java.util.List;
 
 public class PluginManager {
@@ -23,5 +24,9 @@ public class PluginManager {
 
     public static List<String> getPlugins() {
         return BuiltInRegistries.PLUGIN.get().keys();
+    }
+
+    public static InputStream getResource(String identifier, String path) {
+        return PluginLoader.getLoader().getResource(identifier, path);
     }
 }

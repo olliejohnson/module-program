@@ -1,16 +1,22 @@
 package io.oliverj.module.plugin;
 
+import io.oliverj.module.Runner;
 import io.oliverj.module.api.BasePlugin;
+import io.oliverj.module.api.plugin.PluginMetadata;
 import io.oliverj.module.plugin.struct.Dag;
 import io.oliverj.module.plugin.struct.HashDag;
 import io.oliverj.module.registry.BuiltInRegistries;
+import io.oliverj.module.registry.GenericRegistry;
 import io.oliverj.module.registry.Registry;
+import io.oliverj.module.registry.RegistryKey;
+import io.oliverj.module.util.Identifier;
 import io.oliverj.module.util.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -25,7 +31,7 @@ public class PluginLoader {
 
     private final String plugin_dir;
 
-    private final PluginClassLoader loader;
+    private static final PluginClassLoader loader = new PluginClassLoader();
 
     public PluginLoader() {
         this(null);
@@ -33,7 +39,6 @@ public class PluginLoader {
 
     public PluginLoader(@Nullable String dir) {
         plugin_dir = Objects.requireNonNullElse(dir, "plugins");
-        loader = new PluginClassLoader();
     }
 
     public void loadAll() throws URISyntaxException {
@@ -69,6 +74,11 @@ public class PluginLoader {
 
             BasePlugin pluginClass = clazz.getDeclaredConstructor().newInstance();
 
+            Field metaField = clazz.getSuperclass().getDeclaredField("meta");
+            metaField.setAccessible(true);
+            metaField.set(pluginClass, metadata);
+            metaField.setAccessible(false);
+
             Registry.register(BuiltInRegistries.PLUGIN, metadata.identifier, Pair.of(pluginClass, metadata));
         } catch (ClassNotFoundException e) {
             LOGGER.error("Cannot find main entrypoint", e);
@@ -78,6 +88,8 @@ public class PluginLoader {
             LOGGER.error("Cannot access main entrypoint", e);
         } catch (NoSuchMethodException e) {
             LOGGER.error("Method '<init>' does not exist", e);
+        } catch (NoSuchFieldException e) {
+            LOGGER.error("Failed to set meta field", e);
         }
         LOGGER.info("Finished loading {}", loader.getMeta(plugin).name);
     }
@@ -99,6 +111,14 @@ public class PluginLoader {
         LOGGER.info("Initializing {} ({}) version {}", meta.name, meta.identifier, meta.version);
         Registry.getRegistry(BuiltInRegistries.PLUGIN).get(identifier).first.init();
         LOGGER.info("Finished initialization of {} ({})", meta.name, meta.identifier);
+
+        if (Runner.DEBUG) {
+            RegistryKey<GenericRegistry<Identifier, InputStream>> WEB = RegistryKey.ofIdentifier("web");
+            RegistryKey<GenericRegistry<String, Identifier>> ROUTE = RegistryKey.ofIdentifier("route");
+
+            WEB.get().register(Identifier.ofDefault(meta.identifier), PluginManager.getResource(meta.identifier, "plugin.json"));
+            ROUTE.get().register("/plugin/%s".formatted(meta.identifier), Identifier.ofDefault(meta.identifier));
+        }
     }
 
     public void initAll() {
@@ -109,5 +129,9 @@ public class PluginLoader {
     @SuppressWarnings("unused")
     public Map<String, Pair<BasePlugin, PluginMetadata>> getPlugins() {
         return plugins;
+    }
+
+    public static PluginClassLoader getLoader() {
+        return loader;
     }
 }

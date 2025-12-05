@@ -1,9 +1,13 @@
 package io.oliverj.module.api;
 
+import io.oliverj.module.api.plugin.PluginMetadata;
+
 /**
  * Base Plugin class
  */
 public abstract class BasePlugin {
+
+    protected PluginMetadata meta = null;
 
     public BasePlugin() {}
 

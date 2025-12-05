@@ -17,6 +17,7 @@ dependencies {
 
     implementation rootProject
     compileOnly project(":api")
+    compileOnly project(":web")
 }
 
 test {

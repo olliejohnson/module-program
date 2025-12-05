@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+}
+
+group = 'io.oliverj'
+version = '0.0.1'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    compileOnly("org.slf4j:slf4j-api:2.0.17")
+    implementation('io.undertow:undertow-core:2.3.20.Final')
+    implementation('io.undertow:undertow-servlet:2.3.15.Final')
+    compileOnly('org.jboss.xnio:xnio-nio:3.8.16.Final')
+
+    implementation rootProject
+    compileOnly(project(":api"))
+}
+
+tasks.register("copyLibs", Copy) {
+    into "../run/libs"
+    from sourceSets.main.compileClasspath
+}
+
+test {
+    useJUnitPlatform()
+}
